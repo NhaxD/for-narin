@@ -3,62 +3,97 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A letter for you</title>
+<title>A letter for Narin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE: playful, sweet, a little dramatic — a love note with jokes
-   IDEA: a sealed letter that opens into a question
-   PICTURE: an original round cat holding a heart, its face reacts to every "No"
-   COLOUR and TYPE: raspberry pink ground, cream card, hot pink accent; Fredoka
-   LAYOUT: one card centered on one screen, three scenes: letter → question → plan the date */
+/* VOICE: playful, sweet, a little dramatic — a love note that is also a tiny game
+   IDEA: a sealed letter → a handwritten note → a heart-catching game → the big question → fireworks
+   PICTURE: an original round cat holding a heart; its face reacts to every "No"
+   COLOUR and TYPE: raspberry ground, cream card with a glowing rainbow-pink rim; Fredoka + Dancing Script for the letter
+   LAYOUT: one card centred on one screen, five scenes, progress dots on top */
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
 :root{color-scheme:light dark;
-  --bg:light-dark(#ffd3de,#2a0e1b);
+  --bg:light-dark(#ffd3de,#24091a);
   --bg2:light-dark(#ffb3c6,#3d1427);
-  --card:light-dark(#fff8f5,#3a1527);
+  --card:light-dark(#fff8f5,#371325);
+  --paper:light-dark(#fffdf7,#fff6ee);
   --ink:light-dark(#4a1f30,#ffe8ee);
   --soft:light-dark(#8a5468,#e7b3c3);
-  --acc:#ff3b6b; --acc2:#ff8fab; --line:#5a2a3a;
-  --fur:#fffaf6; --shadow:light-dark(rgba(120,20,60,.18),rgba(0,0,0,.45))}
+  --acc:#ff3b6b; --acc2:#ff8fab; --gold:#ffd166; --lilac:#c77dff; --line:#5a2a3a;
+  --fur:#fffaf6; --shadow:light-dark(rgba(120,20,60,.22),rgba(0,0,0,.5))}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html,body{height:100%}
 body{margin:0;color:var(--ink);font:17px/1.5 "Fredoka",ui-rounded,system-ui,sans-serif;overflow-x:clip;
-  background:radial-gradient(120% 80% at 50% 0%,var(--bg2),var(--bg) 70%) fixed;
-  display:grid;place-items:center;min-height:100dvh;padding:20px 14px}
+  background:var(--bg);display:grid;place-items:center;min-height:100dvh;padding:20px 14px}
+.blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.55;z-index:0;pointer-events:none;animation:drift 14s ease-in-out infinite alternate}
+.b1{width:50vmax;height:50vmax;background:var(--bg2);left:-15vmax;top:-15vmax}
+.b2{width:40vmax;height:40vmax;background:light-dark(#ffc6a8,#5a1840);right:-12vmax;bottom:-12vmax;animation-delay:-7s}
+@keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.15)}}
 #hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 #hearts span{position:absolute;bottom:-60px;color:var(--acc);opacity:.22;animation:rise linear infinite}
 @keyframes rise{0%{transform:translate(0,0) rotate(-10deg)}50%{transform:translate(24px,-55vh) rotate(10deg)}100%{transform:translate(-12px,-115vh) rotate(-8deg)}}
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
-.card{position:relative;z-index:1;width:min(520px,100%);background:var(--card);border-radius:30px;
-  padding:clamp(22px,5vw,38px);text-align:center;box-shadow:0 24px 60px var(--shadow),0 0 0 6px rgba(255,255,255,.35)}
-.scr{display:none}.scr.on{display:block;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
-@keyframes pop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
-h1{font-size:clamp(30px,7vw,42px);line-height:1.08;margin:6px 0 8px;font-weight:700;text-wrap:balance}
-h2{font-size:clamp(24px,5.5vw,30px);line-height:1.1;margin:4px 0 6px;font-weight:600;text-wrap:balance}
+#mute{position:fixed;top:12px;right:12px;z-index:70;width:46px;height:46px;border-radius:50%;background:var(--card);color:var(--ink);font-size:20px;box-shadow:0 4px 14px var(--shadow)}
+.card{position:relative;z-index:1;width:min(520px,100%);border-radius:30px;padding:clamp(22px,5vw,36px);text-align:center;
+  border:4px solid transparent;
+  background:linear-gradient(var(--card),var(--card)) padding-box,conic-gradient(from var(--a),var(--acc),var(--gold),var(--lilac),var(--acc2),var(--acc)) border-box;
+  animation:spin 6s linear infinite;box-shadow:0 24px 70px var(--shadow),0 0 40px rgba(255,59,107,.25)}
+@keyframes spin{to{--a:360deg}}
+.card.shake{animation:spin 6s linear infinite,shake .5s}
+@keyframes shake{20%{translate:-10px 0}40%{translate:9px 0}60%{translate:-6px 0}80%{translate:4px 0}}
+.dots{display:flex;gap:7px;justify-content:center;margin:-6px 0 12px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--acc2);opacity:.35;transition:.3s}
+.dots i.on{opacity:1;background:var(--acc);width:24px;border-radius:9px}
+.scr{display:none}.scr.on{display:block;animation:pop .55s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.9) translateY(12px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(28px,7vw,40px);line-height:1.08;margin:4px 0 8px;font-weight:700;text-wrap:balance}
+h2{font-size:clamp(23px,5.5vw,29px);line-height:1.12;margin:4px 0 6px;font-weight:600;text-wrap:balance}
 p{margin:0 0 14px;color:var(--soft)}
 .small{font-size:14px;color:var(--soft)}
-button{font:inherit;cursor:pointer;border:0;-webkit-tap-highlight-color:transparent}
+button{font:inherit;cursor:pointer;border:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
-.btn{min-height:52px;padding:0 30px;border-radius:999px;font-size:19px;font-weight:600;transition:transform .25s cubic-bezier(.2,1.6,.4,1),background .2s}
-.yes{background:var(--acc);color:#fff;box-shadow:0 6px 0 #c41d4c}
-.yes:active{transform:translateY(3px)}
-.no{background:#fff;color:#4a1f30;box-shadow:0 0 0 2px #4a1f30 inset,0 5px 0 #4a1f30;white-space:nowrap;z-index:50}
-.no.flying{position:fixed;transition:left .28s cubic-bezier(.2,1.4,.4,1),top .28s cubic-bezier(.2,1.4,.4,1)}
-.row{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:110px;margin-top:10px}
+.btn{position:relative;overflow:hidden;min-height:52px;padding:0 30px;border-radius:999px;font-size:19px;font-weight:600;transition:transform .25s cubic-bezier(.2,1.6,.4,1),background .2s,opacity .3s}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);translate:-120% 0;animation:shine 2.8s ease-in-out infinite}
+@keyframes shine{60%,100%{translate:120% 0}}
+.yes{background:linear-gradient(180deg,#ff5c85,var(--acc));color:#fff;box-shadow:0 6px 0 #c41d4c,0 10px 24px rgba(255,59,107,.45)}
+.yes:active{translate:0 3px}
+.yes.glow{animation:glow 1.2s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 6px 0 #c41d4c,0 0 34px 8px rgba(255,59,107,.6)}}
+.no{background:#fff;color:#4a1f30;box-shadow:0 0 0 2px #4a1f30 inset,0 5px 0 #4a1f30;white-space:nowrap;z-index:55}
+.no::after{display:none}
+.no.flying{position:fixed;transition:left .3s cubic-bezier(.2,1.4,.4,1),top .3s cubic-bezier(.2,1.4,.4,1),transform .3s}
+.row{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:110px;margin-top:8px}
 /* envelope */
-.env{width:min(300px,80%);margin:8px auto 4px;display:block;cursor:pointer;animation:wiggle 2.4s ease-in-out infinite}
+.env{width:min(290px,80%);margin:6px auto 4px;display:block;cursor:pointer;animation:wiggle 2.4s ease-in-out infinite}
 @keyframes wiggle{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-4deg)}80%{transform:rotate(4deg)}85%{transform:rotate(-3deg)}90%{transform:rotate(2deg)}}
 .env .flap{transform-box:fill-box;transform-origin:50% 0;transition:transform .5s ease}
 .env .letter{transition:transform .6s .35s cubic-bezier(.2,1.3,.4,1)}
 .env .seal{transition:opacity .2s}
-.env.open{animation:none}
-.env.open .flap{transform:scaleY(-1)}
-.env.open .seal{opacity:0}
-.env.open .letter{transform:translateY(-58px)}
+.env.open{animation:none}.env.open .flap{transform:scaleY(-1)}.env.open .seal{opacity:0}.env.open .letter{transform:translateY(-58px)}
+/* letter */
+.paper{background:var(--paper);color:#4a1f30;border-radius:18px;padding:22px 22px 18px;text-align:left;min-height:250px;
+  background-image:repeating-linear-gradient(transparent 0 33px,#ffd6e0 33px 35px);background-position:0 14px;
+  box-shadow:0 10px 30px var(--shadow);transform:rotate(-1deg);font:600 clamp(22px,5.6vw,27px)/35px "Dancing Script",cursive}
+.paper .cur{display:inline-block;width:2px;height:24px;background:var(--acc);vertical-align:-4px;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#nextLetter{opacity:0;pointer-events:none}#nextLetter.show{opacity:1;pointer-events:auto}
+/* game */
+.arena{position:relative;height:300px;border-radius:22px;margin:10px 0 8px;overflow:hidden;
+  background:radial-gradient(circle at 30% 20%,rgba(255,143,171,.25),transparent 60%),radial-gradient(circle at 80% 80%,rgba(199,125,255,.2),transparent 60%),light-dark(#fff0f4,#2b0f1e);
+  box-shadow:inset 0 0 0 2px light-dark(#ffd0dc,#5e2742)}
+.target{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;background:none;padding:0;transition:left .45s cubic-bezier(.3,1.4,.5,1),top .45s cubic-bezier(.3,1.4,.5,1);animation:float 1.4s ease-in-out infinite}
+.target svg{width:100%;height:100%;filter:drop-shadow(0 4px 6px rgba(160,20,60,.35))}
+.target.bad{animation:float 1.1s ease-in-out infinite reverse}
+@keyframes float{50%{transform:translateY(-8px) rotate(6deg) scale(1.05)}}
+.target.gone{transform:scale(1.8);opacity:0;transition:transform .25s,opacity .25s}
+.meter{height:16px;border-radius:9px;background:light-dark(#ffe1e9,#4a1d33);overflow:hidden;margin:6px 0}
+.meter b{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--acc2),var(--acc),var(--lilac));transition:width .4s cubic-bezier(.2,1.3,.4,1)}
+#gmsg{min-height:26px;font-weight:600;color:var(--acc)}
 /* cat */
-.cat{width:min(230px,62%);display:block;margin:-6px auto 0;overflow:visible}
+.cat{width:min(220px,58%);display:block;margin:-6px auto 0;overflow:visible}
 .cat .bod{transform-box:fill-box;transform-origin:50% 100%;animation:bob 2.2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-6px) scaleY(1.02)}}
 .cat .fur{fill:var(--fur);stroke:var(--line);stroke-width:4;stroke-linejoin:round}
@@ -68,8 +103,9 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(.97)}45%{transform:scale(1.1)}}
 .cat .shadow{fill:var(--shadow)}
 .cat .tear{fill:#7cc8ff;stroke:var(--line);stroke-width:2;display:none}
-.e-happy,.brows,.m-sad,.m-open{display:none}
+.e-happy,.brows,.m-sad,.m-open,.e-shock{display:none}
 .cat.worried .brows{display:inline}
+.cat.shock .e-open{display:none}.cat.shock .e-shock{display:inline}
 .cat.sad .brows,.cat.cry .brows,.cat.sad .m-sad,.cat.cry .m-sad{display:inline}
 .cat.sad .m-smile,.cat.cry .m-smile{display:none}
 .cat.cry .tear{display:inline;animation:drip 1.1s ease-in infinite}
@@ -77,20 +113,20 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 @keyframes drip{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(34px);opacity:0}}
 .cat.cry .bod{animation:sob .5s ease-in-out infinite}
 @keyframes sob{50%{transform:translateY(2px) scaleX(1.02)}}
-.cat.party .e-open,.cat.party .m-smile{display:none}
+.cat.party .e-open,.cat.party .m-smile,.cat.party .e-shock{display:none}
 .cat.party .e-happy,.cat.party .m-open{display:inline}
 .cat.party .bod{animation:jump .6s cubic-bezier(.3,0,.5,1) infinite}
 @keyframes jump{0%,100%{transform:translateY(0) scale(1.03,.96)}45%{transform:translateY(-22px) scale(.97,1.04) rotate(-3deg)}60%{transform:translateY(-22px) rotate(3deg)}}
-/* choices */
+/* yes scene */
+.love{font-size:clamp(40px,11vw,64px);font-weight:700;line-height:1;margin:6px 0 2px;background:linear-gradient(90deg,var(--acc),var(--lilac));-webkit-background-clip:text;background-clip:text;color:transparent}
 .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0 6px}
 .opt{background:light-dark(#fff,#4a1d33);color:var(--ink);border-radius:20px;padding:14px 12px;min-height:44px;text-align:left;
   box-shadow:0 0 0 2px light-dark(#ffd0dc,#5e2742) inset;transition:transform .15s,box-shadow .15s}
-.opt:hover{transform:translateY(-3px);box-shadow:0 0 0 3px var(--acc) inset}
+.opt:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:0 0 0 3px var(--acc) inset}
 .opt b{display:block;font-size:17px;font-weight:600}.opt span{font-size:14px;color:var(--soft)}
 .opt i{font-style:normal;font-size:26px;display:block;margin-bottom:2px}
 .when .opt{text-align:center}
-/* ticket */
-.ticket{position:relative;margin:16px auto 14px;max-width:380px;background:var(--acc);color:#fff;border-radius:20px;padding:20px 22px;text-align:left;
+.ticket{position:relative;margin:14px auto 12px;max-width:380px;background:linear-gradient(135deg,#ff5c85,var(--acc) 55%,#e02d8a);color:#fff;border-radius:20px;padding:20px 22px;text-align:left;
   -webkit-mask:radial-gradient(circle 14px at 0 62%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 14px at 100% 62%,#0000 98%,#000) right/51% 100% no-repeat;
   mask:radial-gradient(circle 14px at 0 62%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 14px at 100% 62%,#0000 98%,#000) right/51% 100% no-repeat;
   animation:pop .6s cubic-bezier(.2,1.5,.4,1)}
@@ -98,22 +134,29 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .ticket .t2{font-size:26px;font-weight:700;line-height:1.1;margin:2px 0 12px}
 .ticket dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;padding-top:12px;border-top:2px dashed rgba(255,255,255,.6)}
 .ticket dt{opacity:.8;font-size:15px}.ticket dd{margin:0;font-weight:600}
+.scratch{position:relative;max-width:380px;height:110px;margin:6px auto 14px;border-radius:18px;overflow:hidden;
+  background:linear-gradient(135deg,var(--gold),#ffb347);color:#4a1f30;display:grid;place-items:center;padding:10px 16px;font-weight:600;font-size:18px;line-height:1.3}
+.scratch canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
 .linkbtn{background:none;color:var(--soft);text-decoration:underline;font-size:15px;min-height:44px;padding:0 10px}
 #copied{min-height:22px;font-size:15px;color:var(--acc);font-weight:600;margin-top:6px}
 #copybox{display:none;width:100%;margin-top:8px;font:15px/1.4 inherit;border-radius:12px;padding:10px;border:2px solid var(--acc2);background:var(--card);color:var(--ink)}
-@media(max-width:420px){.opts{gap:9px}.opt{padding:12px 10px}.btn{font-size:18px;padding:0 24px}}
-@media(prefers-reduced-motion:reduce){#hearts{display:none}.env,.cat .bod,.cat .heart{animation:none!important}}
+@media(max-width:420px){.opts{gap:9px}.opt{padding:12px 10px}.btn{font-size:18px;padding:0 24px}.arena{height:270px}}
+@media(prefers-reduced-motion:reduce){#hearts,.blob{display:none}.env,.cat .bod,.cat .heart,.card,.btn::after,.target{animation:none!important}}
 </style>
 </head>
 <body>
+<div class="blob b1"></div><div class="blob b2"></div>
 <div id="hearts" aria-hidden="true"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
+<button id="mute" aria-label="Sound on or off">🔊</button>
 
-<main class="card">
-  <!-- Scene 1: the letter -->
+<main class="card" id="card">
+  <div class="dots" id="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+
+  <!-- 1: envelope -->
   <section class="scr on" id="s1">
     <h1 id="t1">You've got a letter</h1>
-    <p id="p1">Someone who loves you has something important to ask…</p>
+    <p>Someone who loves you has something important to ask…</p>
     <svg class="env" id="env" viewBox="0 0 240 180" role="button" tabindex="0" aria-label="Open the letter">
       <rect x="20" y="50" width="200" height="120" rx="12" fill="#e83e6c" stroke="#5a2a3a" stroke-width="4"/>
       <g class="letter">
@@ -128,11 +171,27 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
         <path d="M120 120c-9-6-8-13-3-13c2 0 3 2 3 2s1-2 3-2c5 0 6 7-3 13z" fill="#fff"/></g>
       </g>
     </svg>
-    <div class="row" style="min-height:70px"><button class="btn yes" id="openBtn">Open it 💌</button></div>
+    <div class="row" style="min-height:70px"><button class="btn yes glow" id="openBtn">Open it 💌</button></div>
   </section>
 
-  <!-- Scene 2: the question -->
+  <!-- 2: handwritten letter -->
   <section class="scr" id="s2">
+    <div class="paper" id="paper" aria-live="polite"></div>
+    <p class="small" style="margin-top:12px">Tap the letter to skip</p>
+    <div class="row" style="min-height:64px"><button class="btn yes" id="nextLetter">Next →</button></div>
+  </section>
+
+  <!-- 3: mini game -->
+  <section class="scr" id="s3">
+    <h2>Catch 5 hearts to unlock my question</h2>
+    <p class="small">Tap the pink hearts fast. Don't touch the broken ones 💔</p>
+    <div class="arena" id="arena"></div>
+    <div class="meter"><b id="gbar"></b></div>
+    <div id="gmsg" role="status">0 / 5</div>
+  </section>
+
+  <!-- 4: the question -->
+  <section class="scr" id="s4">
     <svg class="cat" id="cat" viewBox="0 0 220 210" aria-hidden="true">
       <ellipse class="shadow" cx="110" cy="198" rx="64" ry="8"/>
       <g class="bod">
@@ -143,6 +202,8 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
         <ellipse class="cheek" cx="70" cy="138" rx="13" ry="7"/><ellipse class="cheek" cx="150" cy="138" rx="13" ry="7"/>
         <g class="e-open"><circle class="ink" cx="82" cy="120" r="9"/><circle class="ink" cx="138" cy="120" r="9"/>
           <circle cx="85" cy="117" r="3" fill="#fff"/><circle cx="141" cy="117" r="3" fill="#fff"/></g>
+        <g class="e-shock"><circle cx="82" cy="120" r="12" fill="#fff" stroke="#5a2a3a" stroke-width="4"/><circle class="ink" cx="82" cy="120" r="4"/>
+          <circle cx="138" cy="120" r="12" fill="#fff" stroke="#5a2a3a" stroke-width="4"/><circle class="ink" cx="138" cy="120" r="4"/></g>
         <g class="e-happy"><path class="str" d="M72 123q10-13 20 0"/><path class="str" d="M128 123q10-13 20 0"/></g>
         <g class="brows"><path class="str" d="M68 104L92 97"/><path class="str" d="M152 104L128 97"/></g>
         <path class="str m-smile" d="M98 138q6 7 12 0q6 7 12 0"/>
@@ -153,19 +214,22 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
         <ellipse class="fur" cx="90" cy="172" rx="13" ry="10"/><ellipse class="fur" cx="130" cy="172" rx="13" ry="10"/>
       </g>
     </svg>
-    <h1 id="q">Narin, my love, will you go on a date with me?</h1>
+    <h1 id="q">Will you go on a date with me?</h1>
     <p id="sub">Choose wisely. The cat is watching.</p>
     <div class="row" id="row">
-      <button class="btn yes" id="yes">Yes</button>
+      <button class="btn yes glow" id="yes">Yes</button>
       <button class="btn no" id="no">No</button>
     </div>
   </section>
 
-  <!-- Scene 3: yes! plan the date -->
-  <section class="scr" id="s3">
+  <!-- 5: yes! -->
+  <section class="scr" id="s5">
     <div id="stepA">
-      <h1>YAYYY! 🎉</h1>
-      <p>I knew you would say yes, my love. Now help me plan it — what should we do?</p>
+      <h1>YAYYY!!! 🎉</h1>
+      <p style="margin:0">Love level</p>
+      <div class="love" id="love">0%</div>
+      <div class="meter" style="margin-bottom:14px"><b id="lbar"></b></div>
+      <p id="planMsg">Now help me plan it — what should we do?</p>
       <div class="opts" id="acts"></div>
     </div>
     <div id="stepB" hidden>
@@ -179,115 +243,235 @@ button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
         <div class="t2" id="tTitle">Hongly &amp; Narin</div>
         <dl><dt>Plan</dt><dd id="tAct"></dd><dt>When</dt><dd id="tWhen"></dd><dt>Status</dt><dd>Confirmed, no take-backs</dd><dt>With</dt><dd>All my love 💖</dd></dl>
       </div>
-      <button class="btn yes" id="copy">Copy my answer</button>
+      <p class="small" style="margin:0">One more surprise — scratch the gold card ✨</p>
+      <div class="scratch" id="scratch"><span id="bonus"></span><canvas id="scv"></canvas></div>
+      <button class="btn yes" id="send">Send my answer 💌</button>
       <div id="copied" role="status"></div>
       <textarea id="copybox" rows="4" readonly></textarea>
       <p class="small" id="hint" style="margin-top:6px">Or take a screenshot and send it to me 📸</p>
-      <button class="linkbtn" id="again">Start over</button>
+      <button class="linkbtn" id="again">Play again</button>
     </div>
   </section>
 </main>
 
 <script>
 {
-// ✏️ Change your name here
+// ✏️ Edit these
 const FROM = "Hongly";
 const TO = "Narin";
 const PET = "my love";
+const LETTER = [`Dear ${TO},`, "Every day with you is my favourite day.", "I want to ask you something special…", "but first, a tiny game 😉", `— ${FROM}`];
+const BONUS = "Bonus unlocked: unlimited hugs 🤗 and I pay for everything!";
+// 🔔 Telegram alerts to you (leave empty to turn off)
+const BOT_TOKEN = "";   // from @BotFather, e.g. 123456:ABC...
+const CHAT_ID = "";     // your chat id, e.g. 123456789
 
 const $ = s => document.querySelector(s);
-const QUESTION = `${TO}, ${PET}, will you go on a date with me?`;
-$('#t1').textContent = `${TO}, ${PET}, you've got a letter 💌`;
-$('#q').textContent = QUESTION;
-document.title = `A letter for ${TO}`;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ---------- tell Hongly what she is doing (Telegram) ---------- */
+const sent = new Set();
+function tell(msg, once){
+  if (!BOT_TOKEN || !CHAT_ID || location.hash === '#test') return;
+  if (once){ if (sent.has(once)) return; sent.add(once); }
+  const dev = /iPhone|iPad/.test(navigator.userAgent) ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'computer';
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const body = new URLSearchParams({chat_id: CHAT_ID, text: `${msg}\n— ${time}, on ${dev}`});
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  try { if (navigator.sendBeacon && navigator.sendBeacon(url, body)) return; } catch(e){}
+  fetch(url, {method:'POST', mode:'no-cors', body}).catch(() => {});
+}
+const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} };
 
-/* floating hearts in the background */
-const hb = $('#hearts');
-hb.innerHTML = Array.from({length:16}, () => {
+$('#t1').textContent = `${TO}, ${PET}, you've got a letter 💌`;
+const QUESTION = `${TO}, ${PET}, will you go on a date with me?`;
+$('#q').textContent = QUESTION;
+$('#tTitle').textContent = `${FROM} & ${TO}`;
+$('#bonus').textContent = BONUS;
+$('#hint').textContent = `Or take a screenshot and send it to ${FROM} 📸`;
+tell(`👀 ${TO} opened your page!`, 'visit');
+
+/* ---------- sound (made in code, no files) ---------- */
+let AC = null, muted = false;
+function ac(){ if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return null; } } if (AC.state === 'suspended') AC.resume(); return AC; }
+function tone(f, dur = .15, type = 'sine', vol = .15, to){
+  if (muted) return; const c = ac(); if (!c) return;
+  const o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
+  o.type = type; o.frequency.setValueAtTime(f, t); if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .02);
+}
+const seq = (notes, gap, type, vol, dur) => notes.forEach((f, i) => setTimeout(() => tone(f, dur || .22, type, vol), i * gap));
+const sfx = {
+  pop: () => tone(520, .12, 'sine', .22, 1200),
+  tick: () => tone(1400, .03, 'square', .025),
+  boing: () => tone(320, .35, 'triangle', .2, 110),
+  whoosh: () => tone(900, .18, 'sawtooth', .04, 200),
+  chime: () => seq([784, 988, 1175, 1568], 90, 'sine', .14),
+  sad: () => seq([392, 370, 349, 311], 240, 'triangle', .13, .3),
+  fanfare: () => seq([523, 659, 784, 1047, 784, 1047, 1319], 130, 'square', .06, .26),
+  bang: () => tone(160, .4, 'sawtooth', .06, 40)
+};
+$('#mute').addEventListener('click', () => { muted = !muted; $('#mute').textContent = muted ? '🔇' : '🔊'; if (!muted) sfx.pop(); });
+
+/* ---------- background hearts ---------- */
+$('#hearts').innerHTML = Array.from({length:16}, () => {
   const size = 14 + Math.random()*26, dur = 9 + Math.random()*10;
   return `<span style="left:${Math.random()*100}%;font-size:${size}px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s">♥</span>`;
 }).join('');
 
-/* heart confetti */
+/* ---------- particles: confetti, fireworks, sparkles ---------- */
 const cv = $('#fx'), cx = cv.getContext('2d');
 let parts = [], running = false;
-const colors = ['#ff3b6b','#ff8fab','#ffd166','#ffffff','#c77dff','#ff5c85'];
-function fit(){ const d = devicePixelRatio||1; cv.width = innerWidth*d; cv.height = innerHeight*d; cx.setTransform(d,0,0,d,0,0); }
+const colors = ['#ff3b6b','#ff8fab','#ffd166','#ffffff','#c77dff','#ff5c85','#7cc8ff'];
+function fit(){ const d = devicePixelRatio || 1; cv.width = innerWidth*d; cv.height = innerHeight*d; cx.setTransform(d,0,0,d,0,0); }
 fit(); addEventListener('resize', fit);
 function heartPath(s){ cx.beginPath(); cx.moveTo(0,s*.3); cx.bezierCurveTo(0,0,-s*.5,0,-s*.5,s*.3); cx.bezierCurveTo(-s*.5,s*.6,0,s*.8,0,s); cx.bezierCurveTo(0,s*.8,s*.5,s*.6,s*.5,s*.3); cx.bezierCurveTo(s*.5,0,0,0,0,s*.3); cx.fill(); }
-function burst(x, y, n = 80, power = 9){
+function star(s){ cx.beginPath(); for (let i = 0; i < 8; i++){ const r = i % 2 ? s*.35 : s, a = i*Math.PI/4; cx.lineTo(Math.cos(a)*r, Math.sin(a)*r); } cx.fill(); }
+function add(p){ parts.push(p); if (!running){ running = true; requestAnimationFrame(tick); } }
+function burst(x, y, n = 80, power = 9, only){
   for (let i = 0; i < n; i++){
-    const a = Math.random()*Math.PI*2, v = power*(.4+Math.random()*.8);
-    parts.push({x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v - power*.5, r:Math.random()*6, vr:(Math.random()-.5)*.3,
-      s:8+Math.random()*14, c:colors[i%colors.length], life:1, heart:Math.random()<.65});
+    const a = Math.random()*Math.PI*2, v = power*(.4 + Math.random()*.8);
+    add({x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v - power*.5, r:Math.random()*6, vr:(Math.random()-.5)*.3, g:.22,
+      s:8 + Math.random()*14, c:only || colors[i % colors.length], life:1, fade:.006, k:Math.random() < .65 ? 'heart' : 'rect'});
   }
-  if (!running){ running = true; requestAnimationFrame(tick); }
+}
+function sparks(x, y, color, n = 70){
+  for (let i = 0; i < n; i++){
+    const a = Math.random()*Math.PI*2, v = 2 + Math.random()*6;
+    add({x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v, r:0, vr:0, g:.07, s:2 + Math.random()*2.5, c:Math.random() < .2 ? '#fff' : color, life:1, fade:.012, k:'dot'});
+  }
+}
+function firework(){
+  const c = colors[Math.floor(Math.random()*colors.length)];
+  add({x:innerWidth*(.15 + Math.random()*.7), y:innerHeight + 10, vx:(Math.random()-.5)*2, vy:-(10 + Math.random()*4), r:0, vr:0, g:.16, s:3, c, life:1, fade:0, k:'rocket'});
+  sfx.whoosh();
 }
 function tick(){
-  cx.clearRect(0,0,innerWidth,innerHeight);
-  parts = parts.filter(p => p.life > 0 && p.y < innerHeight + 40);
+  cx.clearRect(0, 0, innerWidth, innerHeight);
+  const keep = [];
   for (const p of parts){
-    p.vy += .22; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= .006;
-    cx.save(); cx.globalAlpha = Math.max(p.life,0); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle = p.c;
-    if (p.heart) heartPath(p.s); else cx.fillRect(-p.s/3,-p.s/5,p.s*.66,p.s*.4);
+    p.vy += p.g; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life -= p.fade;
+    if (p.k === 'rocket' && p.vy > -1.5){ sparks(p.x, p.y, p.c); sfx.bang(); continue; }
+    if (p.life <= 0 || p.y > innerHeight + 40) continue;
+    keep.push(p);
+    cx.save(); cx.globalAlpha = Math.max(p.life, 0); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+    if (p.k === 'heart') heartPath(p.s);
+    else if (p.k === 'rect') cx.fillRect(-p.s/3, -p.s/5, p.s*.66, p.s*.4);
+    else if (p.k === 'star') star(p.s);
+    else { cx.beginPath(); cx.arc(0, 0, p.s, 0, 7); cx.fill(); }
     cx.restore();
   }
-  if (parts.length) requestAnimationFrame(tick); else { running = false; cx.clearRect(0,0,innerWidth,innerHeight); }
+  parts = keep;
+  if (parts.length) requestAnimationFrame(tick); else { running = false; cx.clearRect(0, 0, innerWidth, innerHeight); }
 }
 function rain(){ for (let i = 0; i < 6; i++) setTimeout(() => burst(Math.random()*innerWidth, innerHeight*.25, 45, 10), i*220); }
+let lastSpark = 0;
+if (!reduce) addEventListener('pointermove', e => {
+  const now = performance.now(); if (now - lastSpark < 45) return; lastSpark = now;
+  add({x:e.clientX, y:e.clientY, vx:(Math.random()-.5)*1.5, vy:-.5 - Math.random(), r:Math.random()*3, vr:.1, g:.03, s:4 + Math.random()*4,
+    c:colors[Math.floor(Math.random()*colors.length)], life:1, fade:.03, k:Math.random() < .5 ? 'star' : 'heart'});
+});
 
-/* scenes */
-function show(id){ document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id)); }
+/* ---------- scenes ---------- */
+const order = ['s1','s2','s3','s4','s5'];
+function show(id){
+  document.querySelectorAll('.scr').forEach(s => s.classList.toggle('on', s.id === id));
+  const n = order.indexOf(id);
+  document.querySelectorAll('#dots i').forEach((d, i) => d.classList.toggle('on', i === n));
+}
 
-/* scene 1: open the letter */
+/* 1: open the envelope */
 let opened = false;
 function openLetter(){
-  if (opened) return; opened = true;
+  if (opened) return; opened = true; sfx.chime(); tell('💌 She opened the letter', 'letter');
   const env = $('#env'); env.classList.add('open');
   setTimeout(() => env.insertBefore($('#flap'), env.querySelector('.letter')), 300);
   const r = env.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/3, 40, 7);
-  setTimeout(() => show('s2'), 1300);
+  setTimeout(() => { show('s2'); typeLetter(); }, 1300);
 }
 $('#openBtn').addEventListener('click', openLetter);
 $('#env').addEventListener('click', openLetter);
 $('#env').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLetter(); } });
 
-/* scene 2: the runaway No button */
+/* 2: typewriter letter */
+let typing = null;
+function typeLetter(){
+  const paper = $('#paper'), full = LETTER.join('\n');
+  let i = 0;
+  const render = n => { paper.innerHTML = ''; full.slice(0, n).split('\n').forEach((line, k, arr) => {
+    paper.append(line); if (k < arr.length - 1) paper.append(document.createElement('br')); });
+    if (n < full.length){ const c = document.createElement('span'); c.className = 'cur'; paper.append(c); } };
+  const done = () => { clearInterval(typing); typing = null; render(full.length); $('#nextLetter').classList.add('show'); };
+  typing = setInterval(() => { i++; render(i); if (i % 3 === 0) sfx.tick(); if (i >= full.length) done(); }, reduce ? 5 : 45);
+  paper.onclick = () => { if (typing) done(); };
+}
+$('#nextLetter').addEventListener('click', () => { sfx.pop(); show('s3'); startGame(); });
+
+/* 3: catch the hearts */
+const GOAL = 5;
+const heartSVG = (fill, broken) => `<svg viewBox="0 0 64 64"><path d="M32 56C8 40 6 22 18 16c7-3 12 1 14 5c2-4 7-8 14-5c12 6 10 24-14 40z" fill="${fill}" stroke="#5a2a3a" stroke-width="3.5" stroke-linejoin="round"/>${broken ? '<path d="M32 21l-5 10l8 6l-6 10" fill="none" stroke="#5a2a3a" stroke-width="3.5" stroke-linejoin="round"/>' : '<ellipse cx="22" cy="25" rx="5" ry="3" fill="#fff" opacity=".7" transform="rotate(-30 22 25)"/>'}</svg>`;
+let caught = 0, gTimer = null;
+const gameMsgs = ["Nice!", "Wow, so fast!", "You're a natural 😍", "One more!!"];
+function place(el){ el.style.left = (12 + Math.random()*76) + '%'; el.style.top = (16 + Math.random()*68) + '%'; }
+function startGame(){
+  const arena = $('#arena'); arena.innerHTML = ''; caught = 0;
+  const good = document.createElement('button'); good.className = 'target'; good.innerHTML = heartSVG('#ff3b6b'); good.setAttribute('aria-label', 'Catch the heart');
+  const bad = document.createElement('button'); bad.className = 'target bad'; bad.innerHTML = heartSVG('#9a8a92', true); bad.setAttribute('aria-label', 'Broken heart, avoid');
+  arena.append(good, bad); place(good); place(bad);
+  const hop = () => { place(good); if (Math.random() < .7) place(bad); };
+  gTimer = setInterval(hop, 1150);
+  good.addEventListener('pointerdown', e => {
+    e.preventDefault(); caught++; sfx.pop(); buzz(15);
+    burst(e.clientX, e.clientY, 18, 5);
+    $('#gbar').style.width = (caught / GOAL * 100) + '%';
+    $('#gmsg').textContent = caught >= GOAL ? 'Unlocked! 🔓' : `${caught} / ${GOAL} · ${gameMsgs[(caught - 1) % gameMsgs.length]}`;
+    if (caught >= GOAL){ tell('🎮 She caught all 5 hearts — now seeing your question…', 'game'); clearInterval(gTimer); good.classList.add('gone'); bad.classList.add('gone'); sfx.chime(); setTimeout(() => { show('s4'); sfx.pop(); }, 900); return; }
+    place(good); clearInterval(gTimer); gTimer = setInterval(hop, Math.max(650, 1150 - caught*110));
+  });
+  bad.addEventListener('pointerdown', e => {
+    e.preventDefault(); sfx.boing(); buzz([30, 40, 30]);
+    $('#gmsg').textContent = `Oops, broken heart! ${caught} / ${GOAL}`;
+    $('#card').classList.remove('shake'); void $('#card').offsetWidth; $('#card').classList.add('shake');
+    place(bad);
+  });
+}
+
+/* 4: the runaway No button */
 const noTexts = ["No","Are you sure?","Really sure? 🥺","Think again!","Pretty please?","I'll buy snacks 🍡","With boba too? 🧋",
-  "You're breaking my heart 💔","Last chance!","Okay I'm crying now 😭","The No button is tired…","No is broken. Try Yes →"];
+  "Loading No… 99%","Error 404: No not found","You're breaking my heart 💔","Last chance!","Okay I'm crying now 😭","The No button is tired…"];
 const subs = ["Choose wisely. The cat is watching.","Hmm, that button looks slippery…","The cat is getting nervous.","The cat is very sad now.",
   "Look at the cat. Look at it.","The Yes button keeps growing… just saying.","The cat is crying. Happy now? 😿"];
 const no = $('#no'), yes = $('#yes'), cat = $('#cat');
 let tries = 0, giveUp = false;
-
 function mood(){
-  cat.classList.remove('worried','sad','cry');
-  if (tries >= 7) cat.classList.add('cry'); else if (tries >= 3) cat.classList.add('sad'); else if (tries >= 1) cat.classList.add('worried');
-  $('#sub').textContent = subs[Math.min(Math.floor(tries/2) + (tries ? 1 : 0), subs.length-1)];
-  yes.style.transform = `scale(${Math.min(1 + tries*.13, 2.3)})`;
+  cat.classList.remove('worried','sad','cry','shock');
+  if (tries >= 8) cat.classList.add('cry'); else if (tries >= 4) cat.classList.add('sad'); else if (tries >= 2) cat.classList.add('worried'); else if (tries === 1) cat.classList.add('shock');
+  $('#sub').textContent = subs[Math.min(Math.ceil(tries/2), subs.length - 1)];
+  yes.style.transform = `scale(${Math.min(1 + tries*.12, 2.3)})`;
 }
 function dodge(){
   if (giveUp) return;
-  tries++;
-  no.textContent = noTexts[Math.min(tries, noTexts.length-1)];
-  if (tries >= noTexts.length + 1){
+  tries++; buzz(25);
+  if (tries === 1 || tries === 5 || tries === 10) tell(`🙅 She tried to press No (${tries}×) 😂`);
+  if (tries >= 4 && tries % 2 === 0) sfx.sad(); else sfx.boing();
+  if (tries === 5 || tries === 10){ const c = $('#card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+  no.textContent = noTexts[Math.min(tries, noTexts.length - 1)];
+  if (tries >= noTexts.length){
     giveUp = true; no.className = 'btn yes'; no.style.cssText = ''; no.textContent = 'Okay fine… YES 💖';
-    $('#row').appendChild(no); mood(); return;
+    $('#row').appendChild(no); mood(); sfx.chime(); return;
   }
-  const w = no.offsetWidth, h = no.offsetHeight, yr = yes.getBoundingClientRect();
-  let x, y, k = 0;
-  do {
-    x = 10 + Math.random()*(innerWidth - w - 20);
-    y = 10 + Math.random()*(innerHeight - h - 20);
-    k++;
-  } while (k < 30 && x < yr.right + 20 && x + w > yr.left - 20 && y < yr.bottom + 20 && y + h > yr.top - 20);
+  const shrink = Math.max(.6, 1 - tries*.035);
   if (!no.classList.contains('flying')){
     const r = no.getBoundingClientRect();
+    document.body.appendChild(no);
     no.style.left = r.left + 'px'; no.style.top = r.top + 'px'; no.classList.add('flying');
     no.getBoundingClientRect();
   }
-  no.style.left = x + 'px'; no.style.top = y + 'px';
+  const w = no.offsetWidth, h = no.offsetHeight, yr = yes.getBoundingClientRect();
+  let x, y, k = 0;
+  do { x = 10 + Math.random()*(innerWidth - w - 20); y = 60 + Math.random()*(innerHeight - h - 80); k++; }
+  while (k < 30 && x < yr.right + 24 && x + w > yr.left - 24 && y < yr.bottom + 24 && y + h > yr.top - 24);
+  no.style.left = x + 'px'; no.style.top = y + 'px'; no.style.transform = `scale(${shrink}) rotate(${(Math.random() - .5)*16}deg)`;
   mood();
 }
 no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') dodge(); });
@@ -295,50 +479,86 @@ no.addEventListener('pointerdown', e => { if (!giveUp){ e.preventDefault(); dodg
 no.addEventListener('click', e => { if (giveUp) sayYes(); else { e.preventDefault(); dodge(); } });
 yes.addEventListener('click', sayYes);
 
+let said = false;
 function sayYes(){
+  if (said) return; said = true;
+  tell(`💖💖 ${TO} said YES!!! (after trying No ${tries}×)`, 'yes');
   no.style.display = 'none';
-  cat.classList.remove('worried','sad','cry'); cat.classList.add('party');
+  cat.classList.remove('worried','sad','cry','shock'); cat.classList.add('party');
   $('#q').textContent = `You said YES, ${PET}!!! 💖`; $('#sub').textContent = 'Best day ever. The cat is dancing.';
-  yes.style.transform = 'scale(1)'; yes.style.visibility = 'hidden';
-  rain();
-  setTimeout(() => { show('s3'); burst(innerWidth/2, innerHeight/3, 90, 11); }, 2200);
+  yes.style.visibility = 'hidden';
+  sfx.fanfare(); buzz([60, 40, 60, 40, 120]); rain();
+  for (let i = 0; i < 7; i++) setTimeout(firework, 300 + i*380);
+  setTimeout(() => { show('s5'); burst(innerWidth/2, innerHeight/3, 90, 11); loveMeter(); }, 2800);
 }
 
-/* scene 3: plan the date */
+/* 5: love meter, plan, ticket, scratch card */
+function loveMeter(){
+  let v = 0; const el = $('#love'), bar = $('#lbar');
+  const t = setInterval(() => {
+    v += v < 100 ? 4 : 25;
+    if (v <= 100){ el.textContent = v + '%'; bar.style.width = v + '%'; if (v % 20 === 0) sfx.tick(); }
+    else if (v < 400){ el.textContent = v + '%'; }
+    else { clearInterval(t); el.textContent = '∞ 💖'; sfx.chime(); const r = el.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 50, 8); }
+  }, 45);
+}
 const acts = [["🍜","Dinner together","Something yummy, my treat"],["🧋","Boba & dessert","Sweet drinks, sweet company"],
   ["🎬","Movie night","Popcorn and you"],["🌅","Sunset walk","Slow walk, deep talks"],
   ["🎤","Something fun","Karaoke, arcade, bowling"],["💭","You choose","Anything you want, I'm in"]];
 const whens = [["📅","This Friday night"],["☀️","This weekend"],["🗓️","Next weekend"],["😳","Tonight?!"],["⏰","Whenever you're free"],["💌","I'll tell you later"]];
 let pick = {};
-$('#acts').innerHTML = acts.map((a,i) => `<button class="opt" data-i="${i}"><i>${a[0]}</i><b>${a[1]}</b><span>${a[2]}</span></button>`).join('');
-$('#whens').innerHTML = whens.map((a,i) => `<button class="opt" data-i="${i}"><i>${a[0]}</i><b>${a[1]}</b></button>`).join('');
+$('#planMsg').textContent = `I knew you would say yes, ${PET}. Now help me plan it — what should we do?`;
+$('#acts').innerHTML = acts.map((a, i) => `<button class="opt" data-i="${i}"><i>${a[0]}</i><b>${a[1]}</b><span>${a[2]}</span></button>`).join('');
+$('#whens').innerHTML = whens.map((a, i) => `<button class="opt" data-i="${i}"><i>${a[0]}</i><b>${a[1]}</b></button>`).join('');
 $('#acts').addEventListener('click', e => {
   const b = e.target.closest('.opt'); if (!b) return;
-  pick.act = acts[b.dataset.i][1]; burst(e.clientX, e.clientY, 30, 6);
+  pick.act = acts[b.dataset.i][1]; sfx.pop(); burst(e.clientX, e.clientY, 30, 6);
   $('#stepA').hidden = true; $('#stepB').hidden = false;
 });
 $('#whens').addEventListener('click', e => {
   const b = e.target.closest('.opt'); if (!b) return;
   pick.when = whens[b.dataset.i][1];
-  $('#tTitle').textContent = `${FROM} & ${TO}`; $('#tAct').textContent = pick.act; $('#tWhen').textContent = pick.when;
-  $('#stepB').hidden = true; $('#stepC').hidden = false; rain();
+  $('#tAct').textContent = pick.act; $('#tWhen').textContent = pick.when;
+  $('#stepB').hidden = true; $('#stepC').hidden = false; sfx.fanfare(); rain(); setupScratch();
+  tell(`📋 Date plan picked!\nPlan: ${pick.act}\nWhen: ${pick.when}`, 'plan');
 });
-$('#hint').textContent = `Or take a screenshot and send it to ${FROM} 📸`;
-$('#copy').addEventListener('click', async () => {
-  const text = `${TO} said YES! 💖\nDate with ${FROM}\nPlan: ${pick.act}\nWhen: ${pick.when}`;
+
+let scratchDone = false;
+function setupScratch(){
+  const c = $('#scv'), box = $('#scratch'), d = devicePixelRatio || 1;
+  const W = box.clientWidth, H = box.clientHeight; c.width = W*d; c.height = H*d;
+  const g = c.getContext('2d'); g.scale(d, d);
+  const grd = g.createLinearGradient(0, 0, W, H); grd.addColorStop(0, '#c9a227'); grd.addColorStop(.5, '#f5d76e'); grd.addColorStop(1, '#b8860b');
+  g.fillStyle = grd; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 40; i++){ g.fillStyle = 'rgba(255,255,255,.35)'; g.beginPath(); g.arc(Math.random()*W, Math.random()*H, Math.random()*2 + .5, 0, 7); g.fill(); }
+  g.fillStyle = '#5a3a00'; g.font = '600 20px Fredoka, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('Scratch here ✨', W/2, H/2);
+  g.globalCompositeOperation = 'destination-out';
+  let down = false, n = 0;
+  const scratch = e => {
+    const r = c.getBoundingClientRect(); g.beginPath(); g.arc(e.clientX - r.left, e.clientY - r.top, 22, 0, 7); g.fill();
+    if (++n % 8 === 0){ sfx.tick(); check(); }
+  };
+  const check = () => {
+    if (scratchDone) return;
+    const data = g.getImageData(0, 0, c.width, c.height).data; let clear = 0, total = 0;
+    for (let i = 3; i < data.length; i += 4*40){ total++; if (data[i] === 0) clear++; }
+    if (clear / total > .5){ scratchDone = true; tell('🎁 She scratched the bonus card', 'bonus'); c.style.transition = 'opacity .5s'; c.style.opacity = 0; sfx.chime();
+      const r = box.getBoundingClientRect(); burst(r.left + r.width/2, r.top + r.height/2, 60, 8); }
+  };
+  c.addEventListener('pointerdown', e => { down = true; c.setPointerCapture(e.pointerId); scratch(e); });
+  c.addEventListener('pointermove', e => { if (down) scratch(e); });
+  c.addEventListener('pointerup', () => { down = false; check(); });
+}
+
+$('#send').addEventListener('click', async () => {
+  const text = `${TO} said YES! 💖\nDate with ${FROM}\nPlan: ${pick.act}\nWhen: ${pick.when}${scratchDone ? '\n' + BONUS : ''}`;
+  sfx.pop();
+  if (navigator.share){ try { await navigator.share({text}); $('#copied').textContent = 'Sent! 💖'; return; } catch(e){ if (e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(text); $('#copied').textContent = 'Copied! Now paste it to me in chat 💬'; }
-  catch { const box = $('#copybox'); box.value = text; box.style.display = 'block'; box.select(); $('#copied').textContent = 'Copy this text and send it to me:'; }
+  catch(e){ const box = $('#copybox'); box.value = text; box.style.display = 'block'; box.select(); $('#copied').textContent = 'Copy this text and send it to me:'; }
 });
-$('#again').addEventListener('click', () => {
-  tries = 0; giveUp = false; opened = false; pick = {};
-  no.className = 'btn no'; no.style.cssText = ''; no.textContent = 'No'; $('#row').appendChild(no);
-  yes.style.cssText = ''; cat.className.baseVal = 'cat'; mood();
-  $('#q').textContent = QUESTION;
-  const env = $('#env'); env.classList.remove('open'); env.appendChild($('#flap'));
-  $('#stepA').hidden = false; $('#stepB').hidden = true; $('#stepC').hidden = true;
-  $('#copied').textContent = ''; $('#copybox').style.display = 'none';
-  show('s1');
-});
+$('#again').addEventListener('click', () => location.reload());
 }
 </script>
 </body>
