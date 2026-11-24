@@ -277,8 +277,7 @@ function tell(msg, once){
   const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
   const body = new URLSearchParams({chat_id: CHAT_ID, text: `${msg}\n— ${time}, on ${dev}`});
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-  try { if (navigator.sendBeacon && navigator.sendBeacon(url, body)) return; } catch(e){}
-  fetch(url, {method:'POST', mode:'no-cors', body}).catch(() => {});
+  fetch(url, {method:'POST', mode:'no-cors', keepalive:true, body}).catch(() => { try { navigator.sendBeacon(url, body); } catch(e){} });
 }
 const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} };
 
@@ -442,7 +441,7 @@ const noTexts = ["No","Are you sure?","Really sure? 🥺","Think again!","Pretty
 const subs = ["Choose wisely. The cat is watching.","Hmm, that button looks slippery…","The cat is getting nervous.","The cat is very sad now.",
   "Look at the cat. Look at it.","The Yes button keeps growing… just saying.","The cat is crying. Happy now? 😿"];
 const no = $('#no'), yes = $('#yes'), cat = $('#cat');
-let tries = 0, giveUp = false;
+let tries = 0, giveUp = false, lastDodge = 0, yesArmed = false;
 function mood(){
   cat.classList.remove('worried','sad','cry','shock');
   if (tries >= 8) cat.classList.add('cry'); else if (tries >= 4) cat.classList.add('sad'); else if (tries >= 2) cat.classList.add('worried'); else if (tries === 1) cat.classList.add('shock');
@@ -451,6 +450,8 @@ function mood(){
 }
 function dodge(){
   if (giveUp) return;
+  if (performance.now() - lastDodge < 250) return;
+  lastDodge = performance.now();
   tries++; buzz(25);
   if (tries === 1 || tries === 5 || tries === 10) tell(`🙅 She tried to press No (${tries}×) 😂`);
   if (tries >= 4 && tries % 2 === 0) sfx.sad(); else sfx.boing();
@@ -475,9 +476,13 @@ function dodge(){
   mood();
 }
 no.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') dodge(); });
+// iPhone fix: stop the touch from turning into a "click" that lands on the Yes button after No moves away
+no.addEventListener('touchstart', e => { if (!giveUp){ e.preventDefault(); dodge(); } }, {passive:false});
 no.addEventListener('pointerdown', e => { if (!giveUp){ e.preventDefault(); dodge(); } });
-no.addEventListener('click', e => { if (giveUp) sayYes(); else { e.preventDefault(); dodge(); } });
-yes.addEventListener('click', sayYes);
+no.addEventListener('click', e => { if (giveUp) sayYes(); else { e.preventDefault(); e.stopPropagation(); } });
+// Yes only counts when the finger/mouse really started on Yes, and not right after a No dodge
+yes.addEventListener('pointerdown', () => { yesArmed = performance.now() - lastDodge > 500; });
+yes.addEventListener('click', e => { if (!yesArmed || performance.now() - lastDodge < 500){ e.preventDefault(); return; } sayYes(); });
 
 let said = false;
 function sayYes(){
