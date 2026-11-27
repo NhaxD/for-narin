@@ -98,7 +98,7 @@ I promise to make you laugh, to listen to you, and to always bring you flowers.
     </section>
   </div>
   <section class="radio hide" id="radio" aria-label="Our song">
-    <div class="rtop"><span>♪ NOW PLAYING</span><b>Beautiful in White · Shane Filan</b></div>
+    <div class="rtop"><span>♪ OUR SONG</span><b>Beautiful in White · Shane Filan</b></div>
     <div class="yt"><div id="yt"></div></div>
   </section>
   <div class="dots" aria-hidden="true"><i></i><i></i></div>
@@ -396,22 +396,22 @@ function stopMusic(){musicOn=false;clearInterval(mTimer)}
 /* our song: the official audio through YouTube's embedded player (Beautiful in White; second id is the label's audio upload as a backup) */
 const VIDS=['06-XXOTP3Gc','yxJ5Uh2bnWg'];
 let yt=null,ytReady=false,vi=0,wantSong=false,songOK=false;
-window.onYouTubeIframeAPIReady=()=>{ytReady=true;if(wantSong)makeYT()};
+window.onYouTubeIframeAPIReady=()=>{ytReady=true;makeYT()};
 function loadYT(){if($('ytapi'))return;const sc=document.createElement('script');sc.id='ytapi';sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc)}
 function makeYT(){
   if(yt)return;
   yt=new YT.Player('yt',{videoId:VIDS[vi],playerVars:{playsinline:1,rel:0},events:{
-    onReady:()=>{if(wantSong)playSong()},
-    onStateChange:e=>{if(e.data===1){songOK=true;$('rtap').classList.add('hide');stopMusic();if(!soundOn)yt.mute()}},
-    onError:()=>{vi++;if(vi<VIDS.length){yt.cueVideoById(VIDS[vi]);if(wantSong)setTimeout(playSong,400)}else{$('radio').classList.add('hide');$('rtap').classList.add('hide');if(soundOn)startMusic()}}
+    onReady:()=>{$('radio').classList.remove('hide');if(wantSong)playSong()},
+    onStateChange:e=>{if(e.data===1){songOK=true;$('rtap').classList.add('hide');stopMusic();if(!soundOn)yt.mute()}if(e.data===0)yt.playVideo()},
+    onError:()=>{vi++;if(vi<VIDS.length){yt.cueVideoById(VIDS[vi]);if(wantSong)setTimeout(playSong,400)}else{$('radio').classList.add('hide');$('rtap').classList.add('hide');if(soundOn&&S!=='title')startMusic()}}
   }});
 }
 function playSong(){wantSong=true;try{if(yt&&yt.playVideo){if(soundOn)yt.unMute();yt.playVideo()}}catch(e){}}
-function songYes(){
-  wantSong=true;$('radio').classList.remove('hide');
-  if(ytReady)yt?playSong():makeYT();
-  setTimeout(()=>{if(!songOK&&S==='yes'){if(ytReady)$('rtap').classList.remove('hide');else $('radio').classList.add('hide')}},3500);
+function startSong(){
+  wantSong=true;playSong();
+  setTimeout(()=>{if(songOK)return;if(soundOn)startMusic();if(ytReady&&vi<VIDS.length)$('rtap').classList.remove('hide');else $('radio').classList.add('hide')},3000);
 }
+loadYT();
 const tune=notes=>notes.forEach((n,i)=>beep(n,.16,'square',.04,i*.13));
 $('snd').addEventListener('click',()=>{soundOn=!soundOn;$('snd').textContent=soundOn?'Sound on':'Sound off';$('snd').setAttribute('aria-pressed',soundOn);if(songOK&&yt){soundOn?yt.unMute():yt.mute()}else if(soundOn){if(S!=='title')startMusic()}else stopMusic();if(soundOn)beep(880)});
 
@@ -446,7 +446,7 @@ function ask(){
 }
 $('start').addEventListener('click',()=>{
   beep(523,.08);beep(784,.12,'square',.04,.08);
-  startMusic();loadYT();
+  startSong();
   show('talk');S='walk';say('','Hongly is walking to Narin...');
 });
 $('dlg').addEventListener('click',e=>{
@@ -477,7 +477,7 @@ $('no').addEventListener('click',()=>{
 $('yes').addEventListener('click',yes);
 function yes(){
   if(S==='yes')return;
-  S='yes';happy=1;plantField();songYes();$('choices').classList.add('hide');cv.classList.add('plant');
+  S='yes';happy=1;plantField();$('choices').classList.add('hide');cv.classList.add('plant');
   tune([523,659,784,1047,784,1047]);
   say('QUEST COMPLETE!','She said YES! ♥\nA whole garden blooms for Narin.',()=>{$('endRow').classList.remove('hide');$('hint').classList.remove('hide')});
 }
@@ -487,7 +487,7 @@ $('giftBtn').addEventListener('click',()=>{
 });
 $('noteBtn').addEventListener('click',()=>{beep(988,.08);$('note').classList.remove('hide');$('noteBtn').classList.add('hide')});
 $('again').addEventListener('click',()=>{
-  S='title';boyX=24;walkStep=0;flowers=false;happy=0;hearts=[];sparks=[];petals=[];blooms=[];skyFl=[];noCount=0;giftT=0;wantSong=false;songOK=false;try{yt&&yt.pauseVideo()}catch(e){};$('radio').classList.add('hide');$('rtap').classList.add('hide');if(soundOn)startMusic();clearInterval(typer);typing=false;$('giftBtn').classList.remove('hide');
+  S='title';boyX=24;walkStep=0;flowers=false;happy=0;hearts=[];sparks=[];petals=[];blooms=[];skyFl=[];noCount=0;giftT=0;clearInterval(typer);typing=false;$('giftBtn').classList.remove('hide');
   cv.classList.remove('plant');
   $('no').textContent='NO';$('no').style.cssText='';$('yes').style.removeProperty('--grow');
   ['choices','endRow','note','next','hint'].forEach(id=>$(id).classList.add('hide'));$('noteBtn').classList.remove('hide');
