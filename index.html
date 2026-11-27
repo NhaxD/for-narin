@@ -79,6 +79,7 @@ canvas.plant{cursor:pointer}
           <button class="btn" id="no" type="button">NO</button>
         </div>
         <div class="row hide" id="endRow">
+          <button class="btn" id="giftBtn" type="button">Open your gift</button>
           <button class="btn" id="noteBtn" type="button">Read my note</button>
           <button class="btn ghost" id="again" type="button">Play again</button>
         </div>
@@ -124,10 +125,17 @@ const GIRL=[
 'kskddddddksk','..kddddddk..','.kddddddddk.','.kddddddddk.','kddddddddddk','kkkkkkkkkkkk',
 '...ksk.ksk..','...ksk.ksk..','..kook.kook.','..kkkk.kkkk.'];
 const BOUQ=['..r...p..','.rrr.ppp.','..r.y.p..','.g.yyy.g.','..g.y.g..','...ggg...','..wwgww..','...www...','....w....'];
-const FL_PAL={r:'#ff5c9a',p:'#b89cff',y:'#ffd96a',g:'#3fa35a',w:'#fff3f8'};
+const FL_PAL={r:'#e0245e',p:'#b89cff',y:'#ffd96a',g:'#3fa35a',w:'#fff3f8'};
 const MINI=['rr.rr','rrrrr','.rrr.','..r..'];
 const BIG=['.kk.kk.','krrkrrk','krrrrrk','.krrrk.','..krk..','...k...'];
 const HEART_PAL={r:'#ff5c9a',k:'#ffffff'};
+const ROSE=['....rrrrr....','..rrRRRRRrr..','.rRRrrrrrRRr.','rRRrRRRRRrRRr','rRrRRrrrRRrRr','rRrRrRRRrRrRr',
+'rRRrRrrrRrRRr','.rRRrRRRrRRr.','..rRRrrrRRr..','...rrRRRrr...','.....rrr.....'];
+const ROSE_PAL={r:'#c2185b',R:'#ff5c9a'};
+const LID=['...yy..yy...','....yyyy....','kkkkkkkkkkkk','kbbbbyybbbbk','kkkkkkkkkkkk'];
+const BOX=['.kbbbyybbbk.','.kbbbyybbbk.','.kbbbyybbbk.','.kbbbyybbbk.','.kkkkkkkkkk.'];
+const BOX_PAL={k:'#2a1626',b:'#b89cff',y:'#ffd96a'};
+const FONT={N:['1..1','11.1','1.11','1..1','1..1'],A:['.11.','1..1','1111','1..1','1..1'],R:['111.','1..1','111.','1.1.','1..1'],I:['111','.1.','.1.','.1.','111']};
 const FCOL=['#ff5c9a','#ff9bbb','#b89cff','#ffd96a','#ffffff','#ff6b6b','#ffb3d1','#8fd3ff'];
 
 function spr(rows,pal,x,y,sc=1){
@@ -160,15 +168,25 @@ function scene(f){
   for(const fl of flies){const a=f/40+fl.p;const on=calm||Math.sin(f/12+fl.p*3)>-.3;if(on)px(fl.x+Math.sin(a)*4,fl.y+Math.cos(a*1.3)*3,'#fff59a')}
 }
 
-/* ---------- flowers that bloom ---------- */
+/* ---------- flowers that bloom: roses, tulips, sunflowers, lavender, daisies ---------- */
+const RS=['.rr.','rdrr','rrdr','.rr.'],TU=['c.c','ccc','ccc'],SUN=['.yyy.','yybyy','ybbby','yybyy','.yyy.'],LAV=['p','l','p','l'];
+const ROSE_C=[['#e0245e','#8e1240'],['#ff8fb1','#d9567a'],['#ffffff','#f0b8cc'],['#ff3f6e','#a3123e']];
+function makeFl(x,y,h,d){
+  const r=Math.random();
+  if(r<.38){const [a,b]=pick(ROSE_C);return{x,y,h,d,sp:RS,pal:{r:a,d:b},c:a}}
+  if(r<.58){const c=pick(['#ff6fae','#ffd96a','#b89cff','#ff6b6b']);return{x,y,h,d,sp:TU,pal:{c},c}}
+  if(r<.68)return{x,y,h:h+3,d,sp:SUN,pal:{y:'#ffd23f',b:'#7a4a1f'},c:'#ffd23f'};
+  if(r<.80)return{x,y,h:Math.max(2,h-1),d,sp:LAV,pal:{p:'#9b6dff',l:'#c9b3ff'},c:'#9b6dff'};
+  return{x,y,h,d,c:pick(['#ffffff','#ffffff','#8fd3ff','#ffd96a'])};
+}
 let blooms=[],skyFl=[],petals=[];
 function plantField(){
   blooms=[];
-  for(let i=0;i<54;i++)blooms.push({x:rnd(2,158)|0,y:(84+Math.random()*15)|0,h:3+(Math.random()*3|0),d:30+i*4+rnd(0,30),c:pick(FCOL)});
+  for(let i=0;i<60;i++)blooms.push(makeFl(rnd(2,158)|0,(84+Math.random()*15)|0,3+(Math.random()*3|0),30+i*4+rnd(0,30)));
   blooms.sort((a,b)=>a.y-b.y);
   skyFl=[];const n=32;
   for(let i=0;i<n;i++){const t=i/n*Math.PI*2;
-    skyFl.push({x:Math.round(60+17*Math.sin(t)**3),y:Math.round(31-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))),h:0,d:150+i*5,c:i%2?'#ff5c9a':'#ffb3d1'})}
+    skyFl.push({x:Math.round(60+17*Math.sin(t)**3),y:Math.round(31-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))),h:0,d:150+i*5,sp:RS,pal:i%2?{r:'#e0245e',d:'#8e1240'}:{r:'#ff8fb1',d:'#d9567a'},c:'#ff5c9a'})}
 }
 function flower(b,k){
   if(k<0)return;
@@ -176,10 +194,40 @@ function flower(b,k){
   if(b.h){px(b.x,b.y-grow,'#3fa35a',1,grow);if(grow>=3)px(b.x+1,b.y-2,'#6fd17a')}
   const o=k-b.h*3;if(o<0)return;
   const t=b.y-grow-1-(b.h?0:Math.round(Math.sin((happy+b.x)/20)));
+  if(o>=5&&b.sp){spr(b.sp,b.pal,b.x-(b.sp[0].length>>1),t-(b.sp.length>>1));return}
   if(o>=12){g.globalAlpha=.75;px(b.x-1,t-1,b.c);px(b.x+1,t-1,b.c);px(b.x-1,t+1,b.c);px(b.x+1,t+1,b.c);g.globalAlpha=1}
   if(o>=5){px(b.x-1,t,b.c);px(b.x+1,t,b.c);px(b.x,t-1,b.c);px(b.x,t+1,b.c)}
   px(b.x,t,o>=5?'#ffd96a':b.c);
   if(o===5&&b.h===0)beep(1200+b.x*4,.05,'triangle',.015);
+}
+
+/* ---------- the surprise gift ---------- */
+let giftT=0;
+const bounce=p=>{const n=7.5625,d=2.75;if(p<1/d)return n*p*p;if(p<2/d)return n*(p-=1.5/d)*p+.75;if(p<2.5/d)return n*(p-=2.25/d)*p+.9375;return n*(p-=2.625/d)*p+.984375};
+function writeName(start){
+  skyFl=[];let x0=44;
+  for(const ch of 'NARIN'){const L=FONT[ch];
+    for(let r=0;r<5;r++)for(let c=0;c<L[r].length;c++)if(L[r][c]==='1')
+      skyFl.push({x:x0+c*3+1,y:7+r*3,h:0,d:start+(x0-44+c*3)*.9+r*2,c:pick(['#ff5c9a','#ffb3d1','#ff8fc0','#ffffff'])});
+    x0+=L[0].length*3+4}
+}
+function giftScene(){
+  const t=giftT;
+  const by=t<60?-12+82*bounce(t/60):70;
+  if(t>=200){g.globalAlpha=.22;for(let dy=-18;dy<=18;dy++)for(let dx=-18;dx<=18;dx++)if(dx*dx+dy*dy<=324)px(80+dx,43+dy,'#ffd0e6');g.globalAlpha=1}
+  if(t>80){const sh=Math.min(23,(t-80)/80*23|0);px(80,75-sh,'#3fa35a',2,sh);
+    if(t>120){px(76,64,'#3fa35a',4,2);px(77,63,'#6fd17a',2,1)}
+    if(t>140){px(82,59,'#3fa35a',4,2);px(83,58,'#6fd17a',2,1)}}
+  spr(BOX,BOX_PAL,74,by+5);
+  if(t<70)spr(LID,BOX_PAL,74,by);
+  else if(t<150){const k=t-70;spr(LID,BOX_PAL,74-k*.6,70-k*1.4+k*k*.022)}
+  if(t>=160&&t<200)spr(ROSE,ROSE_PAL,74,42);
+  if(t>=200){spr(ROSE,ROSE_PAL,67,32,2);
+    const s2=(t>>4)%2;px(s2?64:95,s2?30:36,'#fff59a');px(s2?96:63,s2?44:50,'#fff59a');px(s2?72:88,28,'#ffffff')}
+  if(t===70){burst(80,72);burst(80,70,false)}
+  if(t===200){burst(80,42);tune([659,784,880,1047,1319])}
+  if(t===225)writeName(happy+10);
+  if(t===430)say('HONGLY','One rose for the most beautiful girl.\nAnd your name looks best written in flowers. ♥',()=>$('endRow').classList.remove('hide'));
 }
 
 /* ---------- state ---------- */
@@ -250,6 +298,7 @@ function loop(){
   scene(f);
   for(const b of skyFl)flower(b,happy-b.d);
   for(const b of blooms)if(b.y<GROUND+6)flower(b,happy-b.d);
+  if(giftT){giftT++;giftScene()}
   people();
   for(const b of blooms)if(b.y>=GROUND+6)flower(b,happy-b.d);
   particles();
@@ -275,7 +324,7 @@ cv.addEventListener('click',e=>{
   if(S!=='yes'||happy<60)return;
   const r=cv.getBoundingClientRect();
   const x=Math.round(view.sx+(e.clientX-r.left)/r.width*view.vw),y=Math.round(view.sy+(e.clientY-r.top)/r.height*view.vh);
-  if(y>=GROUND+3){blooms.push({x,y:Math.min(y,H-1),h:3+(Math.random()*3|0),d:happy,c:pick(FCOL)});blooms.sort((a,b)=>a.y-b.y);beep(880,.06,'triangle',.03)}
+  if(y>=GROUND+3){blooms.push(makeFl(x,Math.min(y,H-1),3+(Math.random()*3|0),happy));blooms.sort((a,b)=>a.y-b.y);beep(880,.06,'triangle',.03)}
   else{skyFl.push({x,y,h:0,d:happy-5,c:pick(FCOL)});burst(x,y,false)}
 });
 
@@ -288,15 +337,38 @@ function beep(freq,dur=.06,type='square',vol=.035,when=0){
     o.type=type;o.frequency.value=freq;gn.gain.setValueAtTime(vol,t0);gn.gain.exponentialRampToValueAtTime(.0001,t0+dur);
     o.connect(gn).connect(ac.destination);o.start(t0);o.stop(t0+dur+.02)}catch(e){}
 }
+/* Für Elise (Beethoven, 1810) as a soft music box, in 16th-note steps */
+const ELISE=[[76,1],[75,1],[76,1],[75,1],[76,1],[71,1],[74,1],[72,1],[69,3],[60,1],[64,1],[69,1],[71,3],[64,1],[68,1],[71,1],[72,3],[64,1],[76,1],[75,1],
+ [76,1],[75,1],[76,1],[71,1],[74,1],[72,1],[69,3],[60,1],[64,1],[69,1],[71,3],[64,1],[72,1],[71,1],[69,4]];
+const BASS=[[8,45],[9,52],[10,57],[14,40],[15,52],[16,56],[20,45],[21,52],[22,57],[32,45],[33,52],[34,57],[38,40],[39,52],[40,56],[44,45],[45,52],[46,57]];
+const EV=[];{let a=0;for(const [m,d] of ELISE){EV.push([a,m,.07]);a+=d}for(const [a2,m] of BASS)EV.push([a2,m,.04]);EV.sort((x,y)=>x[0]-y[0])}
+const U=.17,LOOP=48;let musicOn=false,mTimer=null,mBase=0,mi=0;
+const mf=m=>440*2**((m-69)/12);
+function mbox(m,t,vol){
+  const o=ac.createOscillator(),o2=ac.createOscillator(),gn=ac.createGain(),g2=ac.createGain();
+  o.type='sine';o2.type='triangle';o.frequency.value=mf(m);o2.frequency.value=mf(m)*2;g2.gain.value=.2;
+  gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(vol,t+.01);gn.gain.exponentialRampToValueAtTime(.0001,t+1.3);
+  o.connect(gn);o2.connect(g2).connect(gn);gn.connect(ac.destination);o.start(t);o2.start(t);o.stop(t+1.35);o2.stop(t+1.35);
+}
+function sched(){
+  for(;;){const t=mBase+EV[mi][0]*U;if(t>ac.currentTime+.3)break;mbox(EV[mi][1],t,EV[mi][2]);
+    if(++mi>=EV.length){mi=0;mBase+=(LOOP+6)*U}}
+}
+function startMusic(){
+  if(!soundOn||musicOn)return;
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.resume)ac.resume()}catch(e){return}
+  musicOn=true;mi=0;mBase=ac.currentTime+.15;mTimer=setInterval(sched,60);
+}
+function stopMusic(){musicOn=false;clearInterval(mTimer)}
 const tune=notes=>notes.forEach((n,i)=>beep(n,.16,'square',.04,i*.13));
-$('snd').addEventListener('click',()=>{soundOn=!soundOn;$('snd').textContent=soundOn?'Sound on':'Sound off';$('snd').setAttribute('aria-pressed',soundOn);if(soundOn)beep(880)});
+$('snd').addEventListener('click',()=>{soundOn=!soundOn;$('snd').textContent=soundOn?'Sound on':'Sound off';$('snd').setAttribute('aria-pressed',soundOn);if(soundOn){beep(880);if(S!=='title')startMusic()}else stopMusic()});
 
 /* ---------- dialog ---------- */
 let typer=null,typing=false,full='',onDone=null,step=0;
 function say(who,text,done){
   $('who').textContent=who;$('txt').textContent='';full=text;onDone=done||null;typing=true;$('next').classList.add('hide');
   let i=0;clearInterval(typer);
-  typer=setInterval(()=>{i++;$('txt').textContent=text.slice(0,i);if(i%2&&text[i-1]!==' ')beep(620+Math.random()*120,.03,'square',.02);
+  typer=setInterval(()=>{i++;$('txt').textContent=text.slice(0,i);if(i%2&&text[i-1]!==' ')beep(620+Math.random()*120,.025,'square',.012);
     if(i>=text.length)finish()},38);
 }
 function finish(){clearInterval(typer);typing=false;$('txt').textContent=full;const d=onDone;onDone=null;d&&d()}
@@ -322,6 +394,7 @@ function ask(){
 }
 $('start').addEventListener('click',()=>{
   beep(523,.08);beep(784,.12,'square',.04,.08);
+  startMusic();
   show('talk');S='walk';say('','Hongly is walking to Narin...');
 });
 $('dlg').addEventListener('click',e=>{
@@ -356,9 +429,13 @@ function yes(){
   tune([523,659,784,1047,784,1047]);
   say('QUEST COMPLETE!','She said YES! ♥\nA whole garden blooms for Narin.',()=>{$('endRow').classList.remove('hide');$('hint').classList.remove('hide')});
 }
+$('giftBtn').addEventListener('click',()=>{
+  beep(784,.08);$('giftBtn').classList.add('hide');$('endRow').classList.add('hide');$('note').classList.add('hide');
+  giftT=1;say('SURPRISE!','Wait... something is falling from the sky...');
+});
 $('noteBtn').addEventListener('click',()=>{beep(988,.08);$('note').classList.remove('hide');$('noteBtn').classList.add('hide')});
 $('again').addEventListener('click',()=>{
-  S='title';boyX=24;walkStep=0;flowers=false;happy=0;hearts=[];sparks=[];petals=[];blooms=[];skyFl=[];noCount=0;clearInterval(typer);typing=false;
+  S='title';boyX=24;walkStep=0;flowers=false;happy=0;hearts=[];sparks=[];petals=[];blooms=[];skyFl=[];noCount=0;giftT=0;clearInterval(typer);typing=false;$('giftBtn').classList.remove('hide');
   cv.classList.remove('plant');
   $('no').textContent='NO';$('no').style.cssText='';$('yes').style.removeProperty('--grow');
   ['choices','endRow','note','next','hint'].forEach(id=>$(id).classList.add('hide'));$('noteBtn').classList.remove('hide');
