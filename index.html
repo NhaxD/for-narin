@@ -36,6 +36,7 @@ body{margin:0;color:var(--ink);font:17px/1.5 "Pixelify Sans",ui-rounded,system-u
 .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px}
 .btn{font:13px/1.2 "Press Start 2P",monospace;color:#fff;background:var(--acc);border:0;border-radius:4px;padding:12px 18px;min-height:44px;cursor:pointer;
   box-shadow:inset 0 -4px 0 #b81e63,inset 0 3px 0 #ff86b6,0 0 0 3px #fff;transition:transform .15s}
+.btn.song{display:inline-flex;align-items:center;text-decoration:none;background:#7a4a1f;box-shadow:inset 0 -4px 0 #573212,inset 0 3px 0 #a5703f,0 0 0 3px #fff}
 .btn:active{transform:translateY(2px)}
 .btn:focus-visible,#snd:focus-visible{outline:3px dashed var(--sun);outline-offset:4px}
 .btn.ghost{background:#3b3478;box-shadow:inset 0 -4px 0 #26205a,inset 0 3px 0 #5a52a8,0 0 0 3px #fff}
@@ -81,6 +82,7 @@ canvas.plant{cursor:pointer}
         <div class="row hide" id="endRow">
           <button class="btn" id="giftBtn" type="button">Open your gift</button>
           <button class="btn" id="noteBtn" type="button">Read my note</button>
+          <a class="btn song" id="song" href="https://www.youtube.com/results?search_query=Destiny%27s+Child+Brown+Eyes" target="_blank" rel="noopener">♪ Play our song: Brown Eyes</a>
           <button class="btn ghost" id="again" type="button">Play again</button>
         </div>
         <p class="hint hide" id="hint">Tap the screen to plant more flowers for you ✿</p>
@@ -429,6 +431,7 @@ function yes(){
   tune([523,659,784,1047,784,1047]);
   say('QUEST COMPLETE!','She said YES! ♥\nA whole garden blooms for Narin.',()=>{$('endRow').classList.remove('hide');$('hint').classList.remove('hide')});
 }
+$('song').addEventListener('click',()=>{stopMusic();soundOn=false;$('snd').textContent='Sound off';$('snd').setAttribute('aria-pressed',false)});
 $('giftBtn').addEventListener('click',()=>{
   beep(784,.08);$('giftBtn').classList.add('hide');$('endRow').classList.add('hide');$('note').classList.add('hide');
   giftT=1;say('SURPRISE!','Wait... something is falling from the sky...');
