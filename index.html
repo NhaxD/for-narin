@@ -98,7 +98,7 @@ I promise to make you laugh, to listen to you, and to always bring you flowers.
     </section>
   </div>
   <section class="radio hide" id="radio" aria-label="Our song">
-    <div class="rtop"><span>♪ NOW PLAYING</span><b>Brown Eyes · Destiny's Child</b></div>
+    <div class="rtop"><span>♪ NOW PLAYING</span><b>Beautiful in White · Shane Filan</b></div>
     <div class="yt"><div id="yt"></div></div>
   </section>
   <div class="dots" aria-hidden="true"><i></i><i></i></div>
@@ -393,8 +393,8 @@ function startMusic(){
 }
 function stopMusic(){musicOn=false;clearInterval(mTimer)}
 
-/* our song: the official audio through YouTube's embedded player (second id is a backup upload by the label) */
-const VIDS=['Mktlac3D7H0','fTz5R_qzKt0'];
+/* our song: the official audio through YouTube's embedded player (Beautiful in White; second id is the label's audio upload as a backup) */
+const VIDS=['06-XXOTP3Gc','yxJ5Uh2bnWg'];
 let yt=null,ytReady=false,vi=0,wantSong=false,songOK=false;
 window.onYouTubeIframeAPIReady=()=>{ytReady=true;if(wantSong)makeYT()};
 function loadYT(){if($('ytapi'))return;const sc=document.createElement('script');sc.id='ytapi';sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc)}
