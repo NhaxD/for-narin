@@ -36,7 +36,6 @@ body{margin:0;color:var(--ink);font:17px/1.5 "Pixelify Sans",ui-rounded,system-u
 .row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:12px}
 .btn{font:13px/1.2 "Press Start 2P",monospace;color:#fff;background:var(--acc);border:0;border-radius:4px;padding:12px 18px;min-height:44px;cursor:pointer;
   box-shadow:inset 0 -4px 0 #b81e63,inset 0 3px 0 #ff86b6,0 0 0 3px #fff;transition:transform .15s}
-.btn.song{display:inline-flex;align-items:center;text-decoration:none;background:#7a4a1f;box-shadow:inset 0 -4px 0 #573212,inset 0 3px 0 #a5703f,0 0 0 3px #fff}
 .btn:active{transform:translateY(2px)}
 .btn:focus-visible,#snd:focus-visible{outline:3px dashed var(--sun);outline-offset:4px}
 .btn.ghost{background:#3b3478;box-shadow:inset 0 -4px 0 #26205a,inset 0 3px 0 #5a52a8,0 0 0 3px #fff}
@@ -54,6 +53,11 @@ body{margin:0;color:var(--ink);font:17px/1.5 "Pixelify Sans",ui-rounded,system-u
 .dots i{width:16px;height:16px;border-radius:50%;background:#ffd0e6;box-shadow:inset 0 -3px 0 #f2a6c8}
 .dots i:nth-child(2){background:#8ff0c8;box-shadow:inset 0 -3px 0 #4fc79a}
 #petals{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;image-rendering:pixelated}
+.radio{margin-top:14px;background:var(--bezel);border-radius:14px;padding:10px;box-shadow:inset 0 0 0 3px #2a1530}
+.rtop{display:flex;justify-content:space-between;align-items:baseline;gap:6px 10px;flex-wrap:wrap;margin:2px 4px 10px;font:13px "Press Start 2P",monospace;color:var(--sun)}
+.rtop b{font:600 16px "Pixelify Sans",sans-serif;color:#fff}
+.yt{position:relative;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:#000}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .hint{text-align:center;color:var(--mint);font-size:16px;margin:10px 0 0}
 canvas.plant{cursor:pointer}
 @media (prefers-reduced-motion:reduce){.next{animation:none}.choices .btn{transition:none}}
@@ -82,9 +86,9 @@ canvas.plant{cursor:pointer}
         <div class="row hide" id="endRow">
           <button class="btn" id="giftBtn" type="button">Open your gift</button>
           <button class="btn" id="noteBtn" type="button">Read my note</button>
-          <a class="btn song" id="song" href="https://www.youtube.com/results?search_query=Destiny%27s+Child+Brown+Eyes" target="_blank" rel="noopener">♪ Play our song: Brown Eyes</a>
           <button class="btn ghost" id="again" type="button">Play again</button>
         </div>
+        <p class="hint hide" id="rtap">♪ Tap play on the player below to hear our song</p>
         <p class="hint hide" id="hint">Tap the screen to plant more flowers for you ✿</p>
         <div class="note hide" id="note">Narin, thank you for saying yes.
 Like these flowers, I want to take care of us and watch us grow, day by day.
@@ -93,6 +97,10 @@ I promise to make you laugh, to listen to you, and to always bring you flowers.
       </div>
     </section>
   </div>
+  <section class="radio hide" id="radio" aria-label="Our song">
+    <div class="rtop"><span>♪ NOW PLAYING</span><b>Brown Eyes · Destiny's Child</b></div>
+    <div class="yt"><div id="yt"></div></div>
+  </section>
   <div class="dots" aria-hidden="true"><i></i><i></i></div>
   <p class="foot">♥ PRESS A TO LOVE ♥</p>
 </main>
@@ -134,6 +142,19 @@ const HEART_PAL={r:'#ff5c9a',k:'#ffffff'};
 const ROSE=['....rrrrr....','..rrRRRRRrr..','.rRRrrrrrRRr.','rRRrRRRRRrRRr','rRrRRrrrRRrRr','rRrRrRRRrRrRr',
 'rRRrRrrrRrRRr','.rRRrRRRrRRr.','..rRRrrrRRr..','...rrRRRrr...','.....rrr.....'];
 const ROSE_PAL={r:'#c2185b',R:'#ff5c9a'};
+const BIGROSE=['........ooooo........','.....oooRRRRRooo.....','...ooRRRhhhhhRRRoo...','..oRRhhRRRRRRRhhRRo..','.oRRhRRddddddRRRhRRo.',
+'.oRhRRdrrRRRrrdRRhRo.','oRRhRdrRhhhhRrdRRhRRo','oRhRRdrRhddRRrdRRRhRo','oRhRRdrRRdrrRrdRRRhRo','oRRhRddrRRRRrddRRhRRo',
+'oRRRhRddrrrrrddRhRRRo','.oRRRhRRdddddRRhRRRo.','.orRRRhhRRRRRRhhRRro.','..orrRRRhhhhhhRRRrro.','...orrrRRRRRRRRrrro..',
+'....oodrrrrrrrrrdoo..','......ooddddddddoo...','......gg.oooo.gg.....','.......g..gg....g....'];
+const BUD=['...o...','..oRo..','.oRhRo.','.oRRdo.','.oRdRo.','.odRdo.','..odo..','.g.o.g.','..ggg..'];
+const BR_PAL={o:'#6b0d33',d:'#9e1446',r:'#c2185b',R:'#ff4f86',h:'#ffb0c8',g:'#3fa35a'};
+const LEAF_L=['...gg.','.gGGg.','gGGg..','gg....'],LEAF_R=LEAF_L.map(r=>[...r].reverse().join(''));
+const LEAF_PAL={g:'#2f8f4a',G:'#6fd17a'};
+function sprReveal(rows,pal,x,y,sc,rad){
+  const cy=rows.length/2-1,cx=rows[0].length/2-.5;
+  for(let j=0;j<rows.length;j++)for(let i=0;i<rows[j].length;i++){const c=rows[j][i];if(c==='.')continue;
+    if(Math.hypot(i-cx,(j-cy)*1.1)>rad)continue;g.fillStyle=pal[c];g.fillRect(x+i*sc,y+j*sc,sc,sc)}
+}
 const LID=['...yy..yy...','....yyyy....','kkkkkkkkkkkk','kbbbbyybbbbk','kkkkkkkkkkkk'];
 const BOX=['.kbbbyybbbk.','.kbbbyybbbk.','.kbbbyybbbk.','.kbbbyybbbk.','.kkkkkkkkkk.'];
 const BOX_PAL={k:'#2a1626',b:'#b89cff',y:'#ffd96a'};
@@ -216,20 +237,29 @@ function writeName(start){
 function giftScene(){
   const t=giftT;
   const by=t<60?-12+82*bounce(t/60):70;
-  if(t>=200){g.globalAlpha=.22;for(let dy=-18;dy<=18;dy++)for(let dx=-18;dx<=18;dx++)if(dx*dx+dy*dy<=324)px(80+dx,43+dy,'#ffd0e6');g.globalAlpha=1}
-  if(t>80){const sh=Math.min(23,(t-80)/80*23|0);px(80,75-sh,'#3fa35a',2,sh);
-    if(t>120){px(76,64,'#3fa35a',4,2);px(77,63,'#6fd17a',2,1)}
-    if(t>140){px(82,59,'#3fa35a',4,2);px(83,58,'#6fd17a',2,1)}}
+  if(t>=200){const a=.16+.06*Math.sin(t/14);g.globalAlpha=a;for(let dy=-26;dy<=26;dy++)for(let dx=-28;dx<=28;dx++)if(dx*dx/784+dy*dy/676<=1)px(80+dx,41+dy,'#ffd0e6');g.globalAlpha=1}
+  if(t>80){const sh=Math.min(16,(t-80)/80*16|0);px(80,75-sh,'#3fa35a',2,sh);px(81,75-sh,'#2a7a3f',1,sh);
+    if(sh>6)px(82,70,'#2a7a3f');if(sh>12)px(79,64,'#2a7a3f');
+    if(t>120)spr(LEAF_L,LEAF_PAL,74,66);if(t>140)spr(LEAF_R,LEAF_PAL,82,61)}
   spr(BOX,BOX_PAL,74,by+5);
   if(t<70)spr(LID,BOX_PAL,74,by);
   else if(t<150){const k=t-70;spr(LID,BOX_PAL,74-k*.6,70-k*1.4+k*k*.022)}
-  if(t>=160&&t<200)spr(ROSE,ROSE_PAL,74,42);
-  if(t>=200){spr(ROSE,ROSE_PAL,67,32,2);
-    const s2=(t>>4)%2;px(s2?64:95,s2?30:36,'#fff59a');px(s2?96:63,s2?44:50,'#fff59a');px(s2?72:88,28,'#ffffff')}
+  const sway=t<200?Math.round(Math.sin(t/10)):0;
+  if(t>=160&&t<200)spr(BUD,BR_PAL,73+sway,43,2);
+  if(t>=200){
+    const rad=t<250?(t-200)/50*13:99;
+    sprReveal(BIGROSE,BR_PAL,59,23,2,rad);
+    if(t>=250){
+      for(let i=0;i<6;i++){const a=t/45+i*Math.PI/3,x=80+Math.cos(a)*30,y=41+Math.sin(a)*24,c=i%2?'#fff59a':'#ffffff';
+        px(x,y,c);if((t>>3)%2){px(x-1,y,c);px(x+1,y,c);px(x,y-1,c);px(x,y+1,c)}}
+      if(t%18===0)petals.push({x:rnd(62,98),y:rnd(28,52),vx:rnd(-.2,.2),vy:rnd(.2,.4),p:rnd(0,6),c:pick(['#ff4f86','#ffb0c8','#c2185b'])});
+    }
+  }
   if(t===70){burst(80,72);burst(80,70,false)}
-  if(t===200){burst(80,42);tune([659,784,880,1047,1319])}
-  if(t===225)writeName(happy+10);
-  if(t===430)say('HONGLY','One rose for the most beautiful girl.\nAnd your name looks best written in flowers. ♥',()=>$('endRow').classList.remove('hide'));
+  if(t===200){tune([659,784,880,1047,1319])}
+  if(t===250){burst(80,41);burst(60,30,false);burst(100,30,false)}
+  if(t===240)writeName(happy+10);
+  if(t===440)say('HONGLY','One rose for the most beautiful girl.\nAnd your name looks best written in flowers. ♥',()=>$('endRow').classList.remove('hide'));
 }
 
 /* ---------- state ---------- */
@@ -362,8 +392,28 @@ function startMusic(){
   musicOn=true;mi=0;mBase=ac.currentTime+.15;mTimer=setInterval(sched,60);
 }
 function stopMusic(){musicOn=false;clearInterval(mTimer)}
+
+/* our song: the official audio through YouTube's embedded player (second id is a backup upload by the label) */
+const VIDS=['Mktlac3D7H0','fTz5R_qzKt0'];
+let yt=null,ytReady=false,vi=0,wantSong=false,songOK=false;
+window.onYouTubeIframeAPIReady=()=>{ytReady=true;if(wantSong)makeYT()};
+function loadYT(){if($('ytapi'))return;const sc=document.createElement('script');sc.id='ytapi';sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc)}
+function makeYT(){
+  if(yt)return;
+  yt=new YT.Player('yt',{videoId:VIDS[vi],playerVars:{playsinline:1,rel:0},events:{
+    onReady:()=>{if(wantSong)playSong()},
+    onStateChange:e=>{if(e.data===1){songOK=true;$('rtap').classList.add('hide');stopMusic();if(!soundOn)yt.mute()}},
+    onError:()=>{vi++;if(vi<VIDS.length){yt.cueVideoById(VIDS[vi]);if(wantSong)setTimeout(playSong,400)}else{$('radio').classList.add('hide');$('rtap').classList.add('hide');if(soundOn)startMusic()}}
+  }});
+}
+function playSong(){wantSong=true;try{if(yt&&yt.playVideo){if(soundOn)yt.unMute();yt.playVideo()}}catch(e){}}
+function songYes(){
+  wantSong=true;$('radio').classList.remove('hide');
+  if(ytReady)yt?playSong():makeYT();
+  setTimeout(()=>{if(!songOK&&S==='yes'){if(ytReady)$('rtap').classList.remove('hide');else $('radio').classList.add('hide')}},3500);
+}
 const tune=notes=>notes.forEach((n,i)=>beep(n,.16,'square',.04,i*.13));
-$('snd').addEventListener('click',()=>{soundOn=!soundOn;$('snd').textContent=soundOn?'Sound on':'Sound off';$('snd').setAttribute('aria-pressed',soundOn);if(soundOn){beep(880);if(S!=='title')startMusic()}else stopMusic()});
+$('snd').addEventListener('click',()=>{soundOn=!soundOn;$('snd').textContent=soundOn?'Sound on':'Sound off';$('snd').setAttribute('aria-pressed',soundOn);if(songOK&&yt){soundOn?yt.unMute():yt.mute()}else if(soundOn){if(S!=='title')startMusic()}else stopMusic();if(soundOn)beep(880)});
 
 /* ---------- dialog ---------- */
 let typer=null,typing=false,full='',onDone=null,step=0;
@@ -396,7 +446,7 @@ function ask(){
 }
 $('start').addEventListener('click',()=>{
   beep(523,.08);beep(784,.12,'square',.04,.08);
-  startMusic();
+  startMusic();loadYT();
   show('talk');S='walk';say('','Hongly is walking to Narin...');
 });
 $('dlg').addEventListener('click',e=>{
@@ -427,18 +477,17 @@ $('no').addEventListener('click',()=>{
 $('yes').addEventListener('click',yes);
 function yes(){
   if(S==='yes')return;
-  S='yes';happy=1;plantField();$('choices').classList.add('hide');cv.classList.add('plant');
+  S='yes';happy=1;plantField();songYes();$('choices').classList.add('hide');cv.classList.add('plant');
   tune([523,659,784,1047,784,1047]);
   say('QUEST COMPLETE!','She said YES! ♥\nA whole garden blooms for Narin.',()=>{$('endRow').classList.remove('hide');$('hint').classList.remove('hide')});
 }
-$('song').addEventListener('click',()=>{stopMusic();soundOn=false;$('snd').textContent='Sound off';$('snd').setAttribute('aria-pressed',false)});
 $('giftBtn').addEventListener('click',()=>{
   beep(784,.08);$('giftBtn').classList.add('hide');$('endRow').classList.add('hide');$('note').classList.add('hide');
-  giftT=1;say('SURPRISE!','Wait... something is falling from the sky...');
+  giftT=1;skyFl=[];say('SURPRISE!','Wait... something is falling from the sky...');
 });
 $('noteBtn').addEventListener('click',()=>{beep(988,.08);$('note').classList.remove('hide');$('noteBtn').classList.add('hide')});
 $('again').addEventListener('click',()=>{
-  S='title';boyX=24;walkStep=0;flowers=false;happy=0;hearts=[];sparks=[];petals=[];blooms=[];skyFl=[];noCount=0;giftT=0;clearInterval(typer);typing=false;$('giftBtn').classList.remove('hide');
+  S='title';boyX=24;walkStep=0;flowers=false;happy=0;hearts=[];sparks=[];petals=[];blooms=[];skyFl=[];noCount=0;giftT=0;wantSong=false;songOK=false;try{yt&&yt.pauseVideo()}catch(e){};$('radio').classList.add('hide');$('rtap').classList.add('hide');if(soundOn)startMusic();clearInterval(typer);typing=false;$('giftBtn').classList.remove('hide');
   cv.classList.remove('plant');
   $('no').textContent='NO';$('no').style.cssText='';$('yes').style.removeProperty('--grow');
   ['choices','endRow','note','next','hint'].forEach(id=>$(id).classList.add('hide'));$('noteBtn').classList.remove('hide');
